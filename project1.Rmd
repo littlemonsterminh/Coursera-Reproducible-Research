@@ -1,0 +1,84 @@
+---
+title: "Project1_Coursera_Reproducible_Research"
+author: "Minh Pham"
+date: "August 16, 2015"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+summary(cars)
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+NOW STARTING THE PROJECT REPORT:
+
+## MAKING THE CODE VISIBLE
+```{r, echo = TRUE}
+echo = TRUE  # Always make code visible
+options(scipen = 1)  # Turn off scientific notations for numbers
+```
+
+## LOADING AND PROCESSING THE DATA:
+```{r}
+data <- read.csv("activity.csv", colClasses = c("integer", "Date", "factor"))
+data$month <- as.numeric(format(data$date, "%m"))
+noNA <- na.omit(data)
+rownames(noNA) <- 1:nrow(noNA)
+head(noNA)
+dim(noNA)
+library(ggplot2)
+```
+
+## What is mean total number of steps taken per day?
+# PLOT THE HISTOGRAM:
+```{r}
+ggplot(noNA, aes(date, steps)) + geom_bar(stat = "identity", 
+	colour = "steelblue", fill = "steelblue", width = 0.7) 
+	+ facet_grid(. ~ month, scales = "free") 
+	+ labs(title = "Histogram of Total Number of Steps Taken Each Day", x = "Date", y = "Total number of steps")
+```
+# MEAN:
+```{r}
+totalSteps <- aggregate(noNA$steps, list(Date = noNA$date), FUN = "sum")$x
+mean(totalSteps)
+```
+# MEDIAN:
+```{r}
+median(totalSteps)
+```
+
+## What is the average daily activity pattern?
+# MAKE A TIME SERIES PLOT (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+```{R}
+avgSteps <- aggregate(noNA$steps, list(interval = as.numeric(as.character(noNA$interval))), FUN = "mean")
+names(avgSteps)[2] <- "meanOfSteps"
+
+ggplot(avgSteps, aes(interval, meanOfSteps)) 
+	+ geom_line(color = "steelblue", size = 0.8) 
+	+ labs(title = "Time Series Plot of the 5-minute Interval", x = "5-minute intervals", y = "Average Number of Steps Taken")
+```
+# MAXIMUM NUMBEROF STEPS: Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{R}
+avgSteps[avgSteps$meanOfSteps == max(avgSteps$meanOfSteps), ]
+```
+
+## Imputing missing values
+# I HAVE NO IDEA !
+
+## Are there differences in activity patterns between weekdays and weekends?
+# I HAVE NO IDEA !
+
+
+
+
